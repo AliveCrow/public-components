@@ -6,6 +6,7 @@ specifiers:
   '@storybook/addon-actions': ^6.4.19
   '@storybook/addon-essentials': ^6.4.19
   '@storybook/addon-links': ^6.4.19
+  '@storybook/addon-storysource': ^6.4.19
   '@storybook/vue': ^6.4.19
   '@vue/cli-plugin-babel': ~4.5.13
   '@vue/cli-plugin-router': ~4.5.13
@@ -23,6 +24,7 @@ specifiers:
   store: ^2.0.12
   style-loader: ^2.0.0
   vue: ^2.6.11
+  vue-docgen-api: ^4.44.15
   vue-loader: ^15.9.8
   vue-router: ^3.2.0
   vue-template-compiler: ^2.6.11
@@ -42,6 +44,7 @@ devDependencies:
   '@storybook/addon-actions': 6.4.19
   '@storybook/addon-essentials': 6.4.19_bee0d4605ce391c96451da7cfae7a48f
   '@storybook/addon-links': 6.4.19
+  '@storybook/addon-storysource': 6.4.19
   '@storybook/vue': 6.4.19_bdf413ea890441e890056a4035b35a4b
   '@vue/cli-plugin-babel': 4.5.15_4c1e5ebbf041a85328f9984e4ede8f8a
   '@vue/cli-plugin-router': 4.5.15_@vue+cli-service@4.5.15
@@ -55,6 +58,7 @@ devDependencies:
   sass: 1.49.8
   sass-loader: 10.2.1_sass@1.49.8
   style-loader: 2.0.0
+  vue-docgen-api: 4.44.15
   vue-loader: 15.9.8_0cd5419bc1947da3fc8a8bbd6c9d95d7
   vue-template-compiler: 2.6.14
 
@@ -2227,6 +2231,35 @@ packages:
       global: 4.4.0
       regenerator-runtime: 0.13.9
       ts-dedent: 2.2.0
+    transitivePeerDependencies:
+      - '@types/react'
+    dev: true
+
+  /@storybook/addon-storysource/6.4.19:
+    resolution: {integrity: sha512-WcjPgd0/m9rGMQbf6H2/wvXUhW5lSELWdXeCCK1taQHQUjhs8tq83fa7OkI9kE25drPiUJuPzObbCoYr94hftQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0
+      react-dom: ^16.8.0 || ^17.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+    dependencies:
+      '@storybook/addons': 6.4.19
+      '@storybook/api': 6.4.19
+      '@storybook/client-logger': 6.4.19
+      '@storybook/components': 6.4.19
+      '@storybook/router': 6.4.19
+      '@storybook/source-loader': 6.4.19
+      '@storybook/theming': 6.4.19
+      core-js: 3.21.1
+      estraverse: 5.3.0
+      loader-utils: 2.0.2
+      prettier: 2.3.0
+      prop-types: 15.8.1
+      react-syntax-highlighter: 13.5.3
+      regenerator-runtime: 0.13.9
     transitivePeerDependencies:
       - '@types/react'
     dev: true

@@ -19,8 +19,6 @@ const Template = (args, { argTypes }) => ({
   components: { InputNumber },
   template: '<InputNumber @change="change"  v-bind="$props" v-on="$listeners" ></InputNumber>',
   methods: { change: action('change') },
-
-
 });
 
 export const 数字输入框 = Template.bind({});
