@@ -120,6 +120,7 @@ export default {
     .el-input {
       width: 100%;
       text-align: left;
+      line-height: 1;
     }
 
     .el-input__inner {
