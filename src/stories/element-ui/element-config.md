@@ -4,10 +4,10 @@
 
 ## **Color 色彩**
 
-- 主色: #1890ff
-- 成功色: #52c41a
-- 警告色: #f5222d
-- 危险色: #909399
+- 主色: <div style="background-color: #1890ff;color: #fff;display:inline-block">1890ff</div>
+- 成功色: <div style="background-color: #52c41a;color: #fff;display:inline-block">52c41a</div>
+- 警告色: <div style="background-color: #f5222d;color: #fff;display:inline-block">f5222d</div>
+- 危险色: <div style="background-color: #909399;color: #fff;display:inline-block">909399</div>
 
 ## **圆角**
 
