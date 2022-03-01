@@ -7,33 +7,40 @@
 <template>
   <el-main class="dynamic-table-body">
     <el-table
-      ref="table"
-      class="table"
-      :max-height="tableHeight"
-      :row-style="rowStyle"
-      highlight-current-row
-      :data="tableData"
-      border
-      @row-click="rowClick"
-      @row-dblclick="rowDblclick"
+        ref="table"
+        class="table"
+        :max-height="tableHeight()"
+        :row-style="rowStyle"
+        highlight-current-row
+        :data="tableData"
+        border
+        stripe
+        header-row-class-name="table-header-class"
+        @row-click="rowClick"
+        @row-dblclick="rowDblclick"
+        @row-contextmenu="rowContextActive"
     >
       <el-table-column
-        v-if="hasIndex"
-        type="index"
-        width="80"
-        label="序号"
-        fixed="left"
+          v-if="selection"
+          type="selection"
+          width="55"/>
+      <el-table-column
+          v-if="hasIndex"
+          type="index"
+          width="80"
+          label="序号"
+          fixed="left"
       />
       <el-table-column
-        v-for="(el, index) in USER_FIELD().dispField"
-        :key="index"
-        align="center"
-        v-bind="{
+          v-for="(el, index) in USER_FIELD().dispField"
+          :key="index"
+          align="center"
+          v-bind="{
           ...el,
           width: 0,
         }"
-        :min-width="el.width"
-        show-overflow-tooltip
+          :min-width="el.width"
+          show-overflow-tooltip
       >
         <template v-slot:default="scope">
           <div>
@@ -43,75 +50,69 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="hasOperate"
-        fixed="right"
-        label="操作"
-        :width="operateWidth"
+          v-if="hasOperate"
+          fixed="right"
+          label="操作"
+          :width="operateWidth"
       >
         <template slot-scope="scope">
-          <slot name="operate" :scope="scope" />
+          <slot name="operate" :scope="scope"/>
         </template>
       </el-table-column>
     </el-table>
+    <div v-show="contextVisible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
+      <slot name="contextList">
+        <ul>
+          <li>刷新</li>
+          <li>关闭</li>
+          <li>关闭其他</li>
+          <li>关闭所有</li>
+        </ul>
+      </slot>
+    </div>
   </el-main>
 </template>
-<script >
-import store from "store";
+<script>
+import store from 'store'
 
 export default {
-  name: "DynamicTableBody",
+  name: 'DynamicTableBody',
   inject: [
-    "formId",
-    "USER_FIELD",
-    "hasOperate",
-    "clickRow",
-    "dblclick",
-    "tableHeight",
-    "hasIndex",
-    "operateWidth",
+    'formId',
+    'USER_FIELD',
+    'hasOperate',
+    'clickRow',
+    'dblclick',
+    'tableHeight',
+    'hasIndex',
+    'operateWidth',
+    'selection',
+    'rowContext'
   ],
   props: {
     tableData: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
   data() {
     return {
-      structure: store.get("structure"),
+      structure: store.get('structure'),
       rowStyle: {},
-    };
+      contextVisible: false,
+      left: 0,
+      top: 0
+    }
   },
   computed: {
     needDict() {
       return (row, el) => {
-        if (el.label === `角色（机构）`) {
-          return `${row["roleName"]} (${row["orgName"]})`;
-        }
-        if (el.prop === "commitTag") {
-          return this.structure["whether"][row[el.prop]];
-        }
-        if (el.prop === "distEid") {
-          return this.structure["admLv"][row[el.prop]];
-        }
-        if (el.prop === "canList") {
-          return this.structure["whether"][row[el.prop]];
-        }
-        if (row[el.prop] !== undefined) {
-          if (el.dict) {
-            return this.structure[el.prop][row[el.prop]];
-          }
-          if (el.fommter) {
-            return this.structure["whether"][row[el.prop]];
-          }
-          return row[el.prop];
-        }
-        return ``;
-      };
-    },
+        return row[el.prop]
+      }
+    }
   },
   mounted() {
-    console.log("?????????: ", this.tableData);
+    document.documentElement.addEventListener('mousedown', this.showContext, true)
   },
   // watch: {
   //   tableData: {
@@ -126,6 +127,9 @@ export default {
   //
   // },
   methods: {
+    showContext() {
+      this.contextVisible = false
+    },
     // /**
     //  * 表格排序事件处理函数
     //  * @param {object} {column,prop,order} 列数据|排序字段|排序方式
@@ -157,31 +161,69 @@ export default {
     // },
     setCurrentRow(index) {
       this.$nextTick(() => {
-        this.$refs.table.setCurrentRow(this.$refs.table.data[index]);
-      });
+        this.$refs.table.setCurrentRow(this.$refs.table.data[index])
+      })
     },
     rowClick(row) {
-      this.clickRow(row);
+      this.clickRow(row)
     },
     rowDblclick(row) {
-      this.dblclick(row);
+      this.dblclick(row)
+    },
+    rowContextmenu(row, column, event) {
+      this.contextVisible = false
+      this.rowContextActive(row, column, event)
+    },
+    rowContextActive(row, column, event) {
+      console.log(this.rowContext)
+      if (!this.rowContext) return
+      event.preventDefault()
+      const menuMinWidth = 105
+      const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
+      const offsetWidth = this.$el.offsetWidth // container width
+      const maxLeft = offsetWidth - menuMinWidth // left boundary
+      const left = event.clientX - offsetLeft + 15 // 15: margin right
+
+      if (left > maxLeft) {
+        this.left = maxLeft
+      } else {
+        this.left = left
+      }
+      this.top = event.clientY - 200
+      this.contextVisible = true
     },
     setRowStyle(customConfig) {
-      var stylejson = {};
+      var stylejson = {}
       stylejson.height =
-        this.USER_FIELD().customConfig.lineHeight + "px !important";
+          this.USER_FIELD().customConfig.lineHeight + 'px !important'
       stylejson.lineHeight =
-        this.USER_FIELD().customConfig.lineHeight + "px !important";
+          this.USER_FIELD().customConfig.lineHeight + 'px !important'
       stylejson.fontSize =
-        this.USER_FIELD().customConfig.fontSize + "px !important";
-      this.rowStyle = stylejson;
-      return stylejson;
-    },
-  },
-};
+          this.USER_FIELD().customConfig.fontSize + 'px !important'
+      this.rowStyle = stylejson
+      return stylejson
+    }
+  }
+}
 </script>
 <style scoped lang="scss">
 .el-main {
   padding: 0 !important;
+
+}
+
+.dynamic-table-body {
+  .contextmenu {
+    margin: 0;
+    background: #fff;
+    z-index: 3000;
+    position: absolute;
+    border-radius: 2px;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #333;
+    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+
+  }
 }
 </style>

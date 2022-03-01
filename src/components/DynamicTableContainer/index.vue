@@ -2,24 +2,39 @@
  * @Description: 输入文件描述信息
  * @Author: liu-wb
  * @Date: 2021-10-29 11:00:42
- * @LastEditTime: 2022-02-18 17:22:00
+ * @LastEditTime: 2022-03-01 13:40:32
 -->
 <template>
   <el-container ref="dynamic-table" class="dynamic-table">
     <TableHeader v-if="hasHeader" @openSettings="openSettings">
+      <TableFooter v-if="pagination" />
       <template #btn>
         <!-- @slot Use this slot 操作按钮组 -->
         <slot name="btn" />
       </template>
     </TableHeader>
-    <TableBody ref="TableBody" v-loading="TABLE_LOADING" :table-data="tableData">
+    <!-- <TableFooter v-if="pagination" /> -->
+    <TableBody
+      ref="TableBody"
+      v-loading="TABLE_LOADING"
+      :table-data="tableData"
+    >
+      <template #contextList="scope">
+        <!-- @slot Use this slot 右键内容 -->
+        <slot name="contextList" :scope="scope.scope" />
+      </template>
       <template #operate="scope">
         <!-- @slot Use this slot 操作列 -->
         <slot name="operate" :scope="scope.scope" />
       </template>
     </TableBody>
-    <TableFooter v-if="!pagination" />
-    <el-dialog v-dialogDrag :title="elTitle" :visible.sync="dialogVisible" :width="dWidth">
+    <el-dialog
+      v-dialogDrag
+      :title="elTitle"
+      :visible.sync="dialogVisible"
+      :width="dWidth"
+      append-to-body
+    >
       <!-- @slot Use this slot dialog的插槽 -->
       <slot :name="slotName" />
       <template v-if="slotName === 'settings'">
@@ -27,7 +42,9 @@
         <div slot="footer" style="text-align: center">
           <el-button type="primary" @click="resetField">恢复默认字段</el-button>
           <el-button type="primary" @click="resetSort">恢复默认排序</el-button>
-          <el-button :loading="btnLoading" type="primary" @click="confirm">确 定</el-button>
+          <el-button :loading="btnLoading" type="primary" @click="confirm"
+            >确 定</el-button
+          >
           <el-button @click="dialogVisible = false">取 消</el-button>
         </div>
       </template>
@@ -50,7 +67,7 @@ export default {
   },
   props: {
     /**
-     * 表格标题 
+     * 表格标题
      */
     title: {
       type: String,
@@ -134,6 +151,17 @@ export default {
     operateWidth: {
       type: String,
       default: '100px'
+    },
+    selection: {
+      type: Boolean,
+      default: true
+    },
+    /**
+     * 是否自定义右键菜单
+     */
+    rowContext: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -155,7 +183,8 @@ export default {
         dispField: []
       },
       slotName: 'settings',
-      dWidth: ''
+      dWidth: '',
+      tableDynamicHeight: window.innerHeight - 310
     }
   },
   computed: {
@@ -175,9 +204,11 @@ export default {
       title: this.title,
       formId: this.formId,
       hasOperate: this.hasOperate,
-      tableHeight: this.tableHeight,
+      tableHeight: () => this.tableDynamicHeight,
       hasIndex: this.hasIndex,
       operateWidth: this.operateWidth,
+      selection: this.selection,
+      rowContext: this.rowContext,
       clickRow: (val) => {
         /**
 * 点击表格行
@@ -255,10 +286,18 @@ export default {
   created() {
     this.slotName = this.tableSlotName
     this.dWidth = this.dialogWidth
+    window.addEventListener('resize', this.updateTableHeight)
+    this.tableDynamicHeight = this.tableHeight
     this.getAllField()
     this.getListFieldConfig()
   },
+  destroyed() {
+    window.removeEventListener('resize', this.updateTableHeight)
+  },
   methods: {
+    updateTableHeight() {
+      this.tableDynamicHeight = window.innerHeight - 310
+    },
     setCurrentRow(index) {
       this.$refs.TableBody.setCurrentRow(index)
     },
@@ -268,14 +307,14 @@ export default {
     },
     async getAllField() {
       // const res = await getAllField({ formId: this.formId })
-      let res = {
-        "formId": null,
-        "pvgId": 1,
-        "formConfig": "{\"lineHeight\":44,\"pageSize\":10,\"pagination\":1,\"fontSize\":14}",
-        "formName": "收款单",
-        "allField": "[{\"dict\":false,\"prop\":\"facCode\",\"label\":\"工厂云码\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"date\",\"label\":\"单据日期\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"billno\",\"label\":\"收款单单据号\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"agreeName\",\"label\":\"合同名称\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"projFullname\",\"label\":\"项目名称\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"customerName\",\"label\":\"客户名称\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"agreeCcode\",\"label\":\"合同云码\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"customerNccode\",\"label\":\"客户nc编码\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"mny\",\"label\":\"收款金额\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":true,\"prop\":\"settletype\",\"label\":\"结算类型\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"creator\",\"label\":\"操作人\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"crtTime\",\"label\":\"操作时间\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false}]",
-        "defaultField": "[{\"dict\":false,\"prop\":\"facCode\",\"label\":\"工厂云码\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"date\",\"label\":\"单据日期\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"billno\",\"label\":\"收款单单据号\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"agreeName\",\"label\":\"合同名称\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"projFullname\",\"label\":\"项目名称\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"customerName\",\"label\":\"客户名称\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"agreeCcode\",\"label\":\"合同云码\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"customerNccode\",\"label\":\"客户nc编码\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"mny\",\"label\":\"收款金额\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":true,\"prop\":\"settletype\",\"label\":\"结算类型\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"creator\",\"label\":\"操作人\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"crtTime\",\"label\":\"操作时间\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false}]",
-        "customConfig": "{\"lineHeight\":44,\"pageSize\":10,\"pagination\":1,\"fontSize\":14}"
+      const res = {
+        'formId': null,
+        'pvgId': 1,
+        'formConfig': '{"lineHeight":44,"pageSize":2,"pagination":1,"fontSize":14}',
+        'formName': '收款单',
+        'allField': '[{"dict":false,"prop":"facCode","label":"工厂云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"date","label":"单据日期","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"billno","label":"收款单单据号","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeName","label":"合同名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"projFullname","label":"项目名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerName","label":"客户名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeCcode","label":"合同云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerNccode","label":"客户nc编码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"mny","label":"收款金额","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":true,"prop":"settletype","label":"结算类型","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"creator","label":"操作人","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"crtTime","label":"操作时间","width":"150","fommter":false,"orderby":"","sortable":false}]',
+        'defaultField': '[{"dict":false,"prop":"facCode","label":"工厂云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"date","label":"单据日期","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"billno","label":"收款单单据号","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeName","label":"合同名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"projFullname","label":"项目名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerName","label":"客户名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeCcode","label":"合同云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerNccode","label":"客户nc编码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"mny","label":"收款金额","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":true,"prop":"settletype","label":"结算类型","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"creator","label":"操作人","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"crtTime","label":"操作时间","width":"150","fommter":false,"orderby":"","sortable":false}]',
+        'customConfig': '{"lineHeight":44,"pageSize":2,"pagination":1,"fontSize":14}'
       }
       this.default.allField = JSON.parse(res.allField)
       this.default.defaultField = JSON.parse(res.defaultField)
@@ -283,13 +322,13 @@ export default {
     },
     async getListFieldConfig() {
       // const res = await getListFieldConfig({ formId: this.formId })
-      let res = {
-        "id": null,
-        "userEid": 398,
-        "customConfig": "{\"lineHeight\":44,\"pageSize\":10,\"pagination\":1,\"fontSize\":14}",
-        "formId": 202148,
-        "dispField": "[{\"dict\":false,\"prop\":\"facCode\",\"label\":\"工厂云码\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"date\",\"label\":\"单据日期\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"billno\",\"label\":\"收款单单据号\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"agreeName\",\"label\":\"合同名称\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"projFullname\",\"label\":\"项目名称\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"customerName\",\"label\":\"客户名称\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"agreeCcode\",\"label\":\"合同云码\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"customerNccode\",\"label\":\"客户nc编码\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"mny\",\"label\":\"收款金额\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":true,\"prop\":\"settletype\",\"label\":\"结算类型\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"creator\",\"label\":\"操作人\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false},{\"dict\":false,\"prop\":\"crtTime\",\"label\":\"操作时间\",\"width\":\"150\",\"fommter\":false,\"orderby\":\"\",\"sortable\":false}]",
-        "allField": null
+      const res = {
+        'id': null,
+        'userEid': 398,
+        'customConfig': '{"lineHeight":44,"pageSize":2,"pagination":1,"fontSize":14}',
+        'formId': 202148,
+        'dispField': '[{"dict":false,"prop":"facCode","label":"工厂云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"date","label":"单据日期","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"billno","label":"收款单单据号","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeName","label":"合同名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"projFullname","label":"项目名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerName","label":"客户名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeCcode","label":"合同云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerNccode","label":"客户nc编码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"mny","label":"收款金额","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":true,"prop":"settletype","label":"结算类型","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"creator","label":"操作人","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"crtTime","label":"操作时间","width":"150","fommter":false,"orderby":"","sortable":false}]',
+        'allField': null
       }
       this.user.customConfig = JSON.parse(res.customConfig)
       if (!res.dispField) {
@@ -298,14 +337,14 @@ export default {
         this.user.dispField = JSON.parse(res.dispField)
       }
       this.size = this.user.customConfig.pageSize
-      this.pagination = this.user.customConfig.pagination
+      this.pagination = !!this.user.customConfig.pagination
       this.$refs.TableBody.setRowStyle()
       if (!this.user.customConfig.pagination) {
         store.set(this.formId, -1)
       } else {
         store.set(this.formId, this.user.customConfig.pageSize)
       }
-      this.pagination = !this.user.customConfig.pagination
+      // this.pagination = !this.user.customConfig.pagination
       /**
 * 点击dialog的确认按钮触发
 *
@@ -380,7 +419,7 @@ export default {
 }
 </script>
 <style lang="scss">
-$primary: #fe8158;
+$primary: #4089ff;
 .dynamic-table {
   .tree_content {
     .el-input {
@@ -483,7 +522,7 @@ $primary: #fe8158;
 .dynamic-table {
   background-color: #fff;
   border-radius: 4px;
-  padding: 10px 20px;
+  padding: 10px;
   display: block;
 }
 </style>

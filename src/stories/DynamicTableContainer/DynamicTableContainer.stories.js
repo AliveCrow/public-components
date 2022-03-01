@@ -2,7 +2,7 @@
  * @Description: 输入文件描述信息
  * @Author: liu-wb
  * @Date: 2022-02-18 15:26:15
- * @LastEditTime: 2022-02-18 17:43:27
+ * @LastEditTime: 2022-03-01 13:19:25
  */
 import Vue from 'vue';
 import Element from 'element-ui';
@@ -12,7 +12,7 @@ Vue.use(Element, { size: 'small', zIndex: 3000 });
 import DynamicTableContainer from '../../components/DynamicTableContainer/index.vue'
 
 export default {
-  title: 'MES/动态表格',
+  title: '动态表格',
   component: DynamicTableContainer,
 }
 

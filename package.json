@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "dayjs": "^1.10.8",
     "element-ui": "^2.15.6",
     "store": "^2.0.12",
     "vue": "^2.6.11",

@@ -5,8 +5,7 @@
  * @LastEditTime: 2022-02-18 15:57:16
 -->
 <template>
-  <div class="table-tree">
-    <el-scrollbar style="height: 100%; width: 100%;padding-bottom:20px">
+    <el-scrollbar style="height: 400px; width: 100%;padding-bottom:20px" class="table-tree">
       <el-tree
         ref="tree"
         class="tree"
@@ -22,7 +21,6 @@
         @node-drop="_nodeDrop"
       />
     </el-scrollbar>
-  </div>
 </template>
 <script lang='js'>
 function deepClone(source) {
@@ -124,9 +122,24 @@ export default {
   .tree_content {
     display: flex;
     align-items: center;
+    .el-input__inner {
+      width: 100px;
+    }
   }
   .el-scrollbar__wrap {
     overflow-x: hidden;
+  }
+  .el-tree-node {
+    height: 40px;
+  }
+  .el-scrollbar__view {
+    padding-top: 10px;
+  }
+  .el-row {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    width: 100%;
   }
 }
 </style>

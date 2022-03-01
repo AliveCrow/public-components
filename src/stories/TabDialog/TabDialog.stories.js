@@ -1,8 +1,14 @@
+/*
+ * @Description: 输入文件描述信息
+ * @Author: liu-wb
+ * @Date: 2022-03-01 13:15:08
+ * @LastEditTime: 2022-03-01 13:19:35
+ */
 import { action } from '@storybook/addon-actions'
 import TabDialog from "../../components/TabDialog";
 
 export default {
-    title: 'MES/Tab弹出框',
+    title: 'Tab弹出框',
     component: TabDialog,
 
 }
