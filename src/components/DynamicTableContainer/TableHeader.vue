@@ -2,17 +2,17 @@
  * @Description: 输入文件描述信息
  * @Author: liu-wb
  * @Date: 2021-10-29 11:20:47
- * @LastEditTime: 2022-03-01 13:43:26
+ * @LastEditTime: 2022-02-18 16:00:41
 -->
 <template>
   <el-header class="dynamic-table-header">
     <section class="dynamic-table-header-left">
-      <span>{{ title }}</span>
+      {{ title }}
       <slot></slot>
     </section>
     <section class="dynamic-table-header-right">
       <slot name="btn" />
-      <el-button type="new" icon="el-icon-setting" @click="_OPEN_" />
+      <el-button type="config" icon="el-icon-setting" @click="_OPEN_" />
     </section>
   </el-header>
 </template>
@@ -31,7 +31,7 @@ export default {
 }
 </script>
 <style scoped lang='scss' >
-$primary: #4089ff;
+$primary: #4089FF;
 .dynamic-table-header {
   padding: 0;
   display: flex;

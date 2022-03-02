@@ -45,6 +45,15 @@ export default {
       checkedNodes: []
     }
   },
+  watch: {
+    treeData: {
+      deep: true,
+      handler(n, o) {
+        // eslint-disable-next-line no-return-assign
+        console.log(n)
+      }
+    }
+  },
   mounted() {
     this._setCheckedNodes(this.USER_FIELD().dispField)
   },
@@ -101,6 +110,9 @@ export default {
               v-model={data.orderby}
               class='left_margin_10'
               clearable
+              onBlur={() => this.treeData.some(r => r.orderby !== '') ? this.treeData.forEach(r => {
+                r.orderby = ''
+              }) : null}
               placeholder='请选择'
             >
               <el-option label='升序' value='ascending'>升序</el-option>
