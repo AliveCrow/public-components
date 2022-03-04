@@ -208,7 +208,10 @@ export default {
   .table {
     max-height: 100%;
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
   .contextmenu {
     margin: 0;
     background: #fff;
@@ -219,7 +222,16 @@ export default {
     font-weight: 400;
     color: #333;
     box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+    ul {
+      margin: 0;
+      padding: 0;
+      li {
+        margin: 0;
+        padding: 7px 16px;
+        cursor: pointer;
+        list-style: none;
 
+<<<<<<< HEAD
     ul {
       margin: 0;
       padding: 0;
@@ -230,6 +242,8 @@ export default {
         cursor: pointer;
         list-style: none;
 
+=======
+>>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
         &:hover {
           background: #4089ff;
           color: #fff;

@@ -5,7 +5,7 @@
  * @LastEditTime: 2022-02-18 17:22:00
 -->
 <template>
-  <el-container ref="dynamic-table" class="dynamic-table">
+  <el-container ref="dynamic-table" class="dynamic-table" >
     <TableHeader v-if="hasHeader" @openSettings="openSettings">
       <TableFooter v-if="pagination && paginationPosition === 'top'"/>
       <template #btn>
@@ -23,10 +23,16 @@
         <slot name="operate" :scope="scope.scope"/>
       </template>
     </TableBody>
+<<<<<<< HEAD
     <TableFooter v-if="pagination && paginationPosition === 'bottom'"/>
     <el-dialog v-dialogDrag :title="elTitle" :visible.sync="dialogVisible" :width="dWidth" append-to-body>
       <!-- @slot dialog的插槽 -->
       <slot :name="slotName"/>
+=======
+    <el-dialog v-dialogDrag :title="elTitle" :visible.sync="dialogVisible" :width="dWidth" append-to-body>
+      <!-- @slot dialog的插槽 -->
+      <slot :name="slotName" />
+>>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
       <template v-if="slotName === 'settings'">
         <TableConfig ref="TableConfig"/>
         <div slot="footer" style="text-align: center">
@@ -112,8 +118,13 @@ export default {
       default: false
     },
     /**
+<<<<<<< HEAD
      * 表格高度
      */
+=======
+* 表格高度
+*/
+>>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
     tableHeight: {
       type: Number,
       default: 0
@@ -294,13 +305,21 @@ export default {
       this.$emit('update:dialogWidth', '600px')
     },
     async getAllField() {
+<<<<<<< HEAD
       const res = await this.$api.erp.getAllField({ formId: this.formId })
+=======
+      const res = await this.$api.mock.getAllField({ formId: this.formId })
+>>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
       this.default.allField = JSON.parse(res.allField)
       this.default.defaultField = JSON.parse(res.defaultField)
       this.default.formConfig = JSON.parse(res.formConfig)
     },
     async getListFieldConfig() {
+<<<<<<< HEAD
       const res = await this.$api.erp.getListFieldConfig({ formId: this.formId })
+=======
+      const res = await this.$api.mock.getListFieldConfig({ formId: this.formId })
+>>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
       this.user.customConfig = JSON.parse(res.customConfig)
       if (!res.dispField) {
         this.user.dispField = JSON.parse(res.allField)
@@ -327,6 +346,7 @@ export default {
 
       // this.pagination = !this.user.customConfig.pagination
       /**
+<<<<<<< HEAD
        * 点击dialog的确认按钮触发
        *
        * @event confirm
@@ -335,6 +355,16 @@ export default {
     },
     async saveField() {
       const res = await this.$api.erp.saveListFieldConfig({
+=======
+* 点击dialog的确认按钮触发
+*
+* @event confirm
+*/
+      this.$emit('table-ready')
+    },
+    async saveField() {
+      const res = await this.$api.mock.saveListFieldConfig({
+>>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
         formId: this.formId,
         allField: JSON.stringify(this.$refs.TableConfig.$refs.TableTree.treeData),
         defaultField: JSON.stringify(this.default.defaultField),
@@ -506,7 +536,11 @@ $primary: #4089FF;
   border-radius: 4px;
   padding: 10px;
   display: flex;
+<<<<<<< HEAD
   flex: none !important;
+=======
+  flex: none!important;
+>>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
   flex-direction: column;
 }
 </style>
