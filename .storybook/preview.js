@@ -17,10 +17,6 @@ export const parameters = {
     storySort: (a, b) => {
 
     },
-    theme: {
-      brandTitle: '公共组件库',
-      brandUrl: 'https://github.com/AliveCrow/public-components'
     },
-  },
 
 }
