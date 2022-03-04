@@ -7,6 +7,8 @@ specifiers:
   '@storybook/addon-essentials': ^6.4.19
   '@storybook/addon-links': ^6.4.19
   '@storybook/addon-storysource': ^6.4.19
+  '@storybook/addons': ^6.4.19
+  '@storybook/theming': ^6.4.19
   '@storybook/vue': ^6.4.19
   '@vue/cli-plugin-babel': ~4.5.13
   '@vue/cli-plugin-router': ~4.5.13
@@ -47,6 +49,8 @@ devDependencies:
   '@storybook/addon-essentials': 6.4.19_bee0d4605ce391c96451da7cfae7a48f
   '@storybook/addon-links': 6.4.19
   '@storybook/addon-storysource': 6.4.19
+  '@storybook/addons': 6.4.19
+  '@storybook/theming': 6.4.19
   '@storybook/vue': 6.4.19_bdf413ea890441e890056a4035b35a4b
   '@vue/cli-plugin-babel': 4.5.15_4c1e5ebbf041a85328f9984e4ede8f8a
   '@vue/cli-plugin-router': 4.5.15_@vue+cli-service@4.5.15

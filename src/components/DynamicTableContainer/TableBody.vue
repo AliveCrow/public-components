@@ -7,41 +7,31 @@
 <template>
   <el-main class="dynamic-table-body">
     <el-table
-        ref="table"
-        class="table"
-        :row-style="rowStyle"
-        :max-height="tableHeight()"
-        highlight-current-row
-        :data="tableData"
-        border
-        stripe
-        header-row-class-name="table-header-class"
-        @row-click="rowClick"
-        @row-dblclick="rowDblclick"
-        @row-contextmenu="rowContextActive"
+      ref="table"
+      class="table"
+      :row-style="rowStyle"
+      :max-height="tableHeight()"
+      highlight-current-row
+      :data="tableData"
+      border
+      stripe
+      header-row-class-name="table-header-class"
+      @row-click="rowClick"
+      @row-dblclick="rowDblclick"
+      @row-contextmenu="rowContextActive"
     >
+      <el-table-column v-if="selection" fixed="left" type="selection" width="55" />
+      <el-table-column v-if="hasIndex" type="index" width="80" label="序号" fixed="left" />
       <el-table-column
-          v-if="selection"
-          fixed="left"
-          type="selection"
-          width="55"/>
-      <el-table-column
-          v-if="hasIndex"
-          type="index"
-          width="80"
-          label="序号"
-          fixed="left"
-      />
-      <el-table-column
-          v-for="(el, index) in USER_FIELD().dispField"
-          :key="index"
-          align="center"
-          v-bind="{
-                ...el,
-                width: 0,
-              }"
-          :min-width="el.width"
-          show-overflow-tooltip
+        v-for="(el, index) in USER_FIELD().dispField"
+        :key="index"
+        align="center"
+        v-bind="{
+          ...el,
+          width: 0,
+        }"
+        :min-width="el.width"
+        show-overflow-tooltip
       >
         <template v-slot:default="scope">
           <div>
@@ -51,17 +41,21 @@
         </template>
       </el-table-column>
       <el-table-column
-          v-if="hasOperate && USER_FIELD().dispField.length>0"
-          fixed="right"
-          label="操作"
-          :width="operateWidth"
+        v-if="hasOperate && USER_FIELD().dispField.length > 0"
+        fixed="right"
+        label="操作"
+        :width="operateWidth"
       >
         <template slot-scope="scope">
-          <slot name="operate" :scope="scope"/>
+          <slot name="operate" :scope="scope" />
         </template>
       </el-table-column>
     </el-table>
-    <div v-show="contextVisible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
+    <div
+      v-show="contextVisible"
+      :style="{ left: left + 'px', top: top + 'px' }"
+      class="contextmenu"
+    >
       <slot name="contextList">
         <ul>
           <li>刷新</li>
@@ -97,7 +91,7 @@ export default {
       default: () => []
     }
   },
-  data() {
+  data () {
     return {
       structure: store.get('structure'),
       rowStyle: {},
@@ -107,20 +101,20 @@ export default {
     }
   },
   computed: {
-    needDict() {
+    needDict () {
       return (row, el) => {
         return row[el.prop]
       }
     }
   },
-  mounted() {
+  mounted () {
     document.documentElement.addEventListener('mousedown', this.showContext, true)
   },
-  destroyed() {
+  destroyed () {
     document.documentElement.removeEventListener('mousedown', this.showContext)
   },
   methods: {
-    showContext() {
+    showContext () {
       this.contextVisible = false
     },
     // /**
@@ -152,22 +146,22 @@ export default {
     //     }
     //   }
     // },
-    setCurrentRow(index) {
+    setCurrentRow (index) {
       this.$nextTick(() => {
         this.$refs.table.setCurrentRow(this.$refs.table.data[index])
       })
     },
-    rowClick(row) {
+    rowClick (row) {
       this.clickRow(row)
     },
-    rowDblclick(row) {
+    rowDblclick (row) {
       this.dblclick(row)
     },
-    rowContextmenu(row, column, event) {
+    rowContextmenu (row, column, event) {
       this.contextVisible = false
       this.rowContextActive(row, column, event)
     },
-    rowContextActive(row, column, event) {
+    rowContextActive (row, column, event) {
       if (!this.rowContext) return
       event.preventDefault()
       const menuMinWidth = 105
@@ -184,14 +178,14 @@ export default {
       this.top = event.clientY - 200
       this.contextVisible = true
     },
-    setRowStyle(customConfig) {
+    setRowStyle (customConfig) {
       var stylejson = {}
       stylejson.height =
-          this.USER_FIELD().customConfig.lineHeight + 'px !important'
+        this.USER_FIELD().customConfig.lineHeight + 'px !important'
       stylejson.lineHeight =
-          this.USER_FIELD().customConfig.lineHeight + 'px !important'
+        this.USER_FIELD().customConfig.lineHeight + 'px !important'
       stylejson.fontSize =
-          this.USER_FIELD().customConfig.fontSize + 'px !important'
+        this.USER_FIELD().customConfig.fontSize + 'px !important'
       this.rowStyle = stylejson
       return stylejson
     }
@@ -201,17 +195,12 @@ export default {
 <style scoped lang="scss">
 .el-main {
   padding: 0 !important;
-
 }
 
 .dynamic-table-body {
   .table {
     max-height: 100%;
   }
-<<<<<<< HEAD
-
-=======
->>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
   .contextmenu {
     margin: 0;
     background: #fff;
@@ -225,16 +214,6 @@ export default {
     ul {
       margin: 0;
       padding: 0;
-      li {
-        margin: 0;
-        padding: 7px 16px;
-        cursor: pointer;
-        list-style: none;
-
-<<<<<<< HEAD
-    ul {
-      margin: 0;
-      padding: 0;
 
       li {
         margin: 0;
@@ -242,8 +221,6 @@ export default {
         cursor: pointer;
         list-style: none;
 
-=======
->>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
         &:hover {
           background: #4089ff;
           color: #fff;

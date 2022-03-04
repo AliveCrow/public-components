@@ -2,39 +2,39 @@
  * @Description: 输入文件描述信息
  * @Author: liu-wb
  * @Date: 2021-10-29 11:00:42
- * @LastEditTime: 2022-02-18 17:22:00
+ * @LastEditTime: 2022-03-04 10:42:18
 -->
 <template>
-  <el-container ref="dynamic-table" class="dynamic-table" >
+  <el-container ref="dynamic-table" class="dynamic-table">
     <TableHeader v-if="hasHeader" @openSettings="openSettings">
-      <TableFooter v-if="pagination && paginationPosition === 'top'"/>
+      <TableFooter v-if="pagination && paginationPosition === 'top'" />
       <template #btn>
         <!-- @slot Use this slot 操作按钮组 -->
-        <slot name="btn"/>
+        <slot name="btn" />
       </template>
     </TableHeader>
     <TableBody ref="TableBody" v-loading="TABLE_LOADING" :table-data="tableData">
       <template #contextList="scope">
         <!-- @slot Use this slot 右键内容 -->
-        <slot name="contextList" :scope="scope.scope"/>
+        <slot name="contextList" :scope="scope.scope" />
       </template>
       <template #operate="scope">
         <!-- @slot Use this slot 操作列 -->
-        <slot name="operate" :scope="scope.scope"/>
+        <slot name="operate" :scope="scope.scope" />
       </template>
     </TableBody>
-<<<<<<< HEAD
-    <TableFooter v-if="pagination && paginationPosition === 'bottom'"/>
-    <el-dialog v-dialogDrag :title="elTitle" :visible.sync="dialogVisible" :width="dWidth" append-to-body>
-      <!-- @slot dialog的插槽 -->
-      <slot :name="slotName"/>
-=======
-    <el-dialog v-dialogDrag :title="elTitle" :visible.sync="dialogVisible" :width="dWidth" append-to-body>
+    <TableFooter v-if="pagination && paginationPosition === 'bottom'" />
+    <el-dialog
+      v-dialogDrag
+      :title="elTitle"
+      :visible.sync="dialogVisible"
+      :width="dWidth"
+      append-to-body
+    >
       <!-- @slot dialog的插槽 -->
       <slot :name="slotName" />
->>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
       <template v-if="slotName === 'settings'">
-        <TableConfig ref="TableConfig"/>
+        <TableConfig ref="TableConfig" />
         <div slot="footer" style="text-align: center">
           <el-button type="primary" @click="resetField">恢复默认字段</el-button>
           <el-button type="primary" @click="resetSort">恢复默认排序</el-button>
@@ -118,13 +118,8 @@ export default {
       default: false
     },
     /**
-<<<<<<< HEAD
      * 表格高度
      */
-=======
-* 表格高度
-*/
->>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
     tableHeight: {
       type: Number,
       default: 0
@@ -173,7 +168,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       elTitle: this.dTitle,
       dialogVisible: false,
@@ -201,11 +196,11 @@ export default {
     }
   },
   computed: {
-    TABLE_LOADING() {
+    TABLE_LOADING () {
       return this.tableLoading
     }
   },
-  provide() {
+  provide () {
     return {
       title: this.title,
       formId: this.formId,
@@ -268,7 +263,7 @@ export default {
     }
   },
   watch: {
-    dialogVisible(n, o) {
+    dialogVisible (n, o) {
       if (n) {
         this.$nextTick(() => {
           if (this.$refs.TableConfig) {
@@ -278,10 +273,10 @@ export default {
         })
       }
     },
-    dialogWidth(n, o) {
+    dialogWidth (n, o) {
       this.dWidth = n
     },
-    current(n) {
+    current (n) {
       /**
        * 当前页改变
        *
@@ -290,36 +285,28 @@ export default {
       this.$emit('currentChange', n)
     }
   },
-  created() {
+  created () {
     this.slotName = this.tableSlotName
     this.dWidth = this.dialogWidth
     this.getAllField()
     this.getListFieldConfig()
   },
   methods: {
-    setCurrentRow(index) {
+    setCurrentRow (index) {
       this.$refs.TableBody.setCurrentRow(index)
     },
-    openSettings() {
+    openSettings () {
       this.dWidth = '600px'
       this.$emit('update:dialogWidth', '600px')
     },
-    async getAllField() {
-<<<<<<< HEAD
+    async getAllField () {
       const res = await this.$api.erp.getAllField({ formId: this.formId })
-=======
-      const res = await this.$api.mock.getAllField({ formId: this.formId })
->>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
       this.default.allField = JSON.parse(res.allField)
       this.default.defaultField = JSON.parse(res.defaultField)
       this.default.formConfig = JSON.parse(res.formConfig)
     },
-    async getListFieldConfig() {
-<<<<<<< HEAD
+    async getListFieldConfig () {
       const res = await this.$api.erp.getListFieldConfig({ formId: this.formId })
-=======
-      const res = await this.$api.mock.getListFieldConfig({ formId: this.formId })
->>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
       this.user.customConfig = JSON.parse(res.customConfig)
       if (!res.dispField) {
         this.user.dispField = JSON.parse(res.allField)
@@ -346,25 +333,14 @@ export default {
 
       // this.pagination = !this.user.customConfig.pagination
       /**
-<<<<<<< HEAD
        * 点击dialog的确认按钮触发
        *
        * @event confirm
        */
       this.$emit('table-ready')
     },
-    async saveField() {
+    async saveField () {
       const res = await this.$api.erp.saveListFieldConfig({
-=======
-* 点击dialog的确认按钮触发
-*
-* @event confirm
-*/
-      this.$emit('table-ready')
-    },
-    async saveField() {
-      const res = await this.$api.mock.saveListFieldConfig({
->>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
         formId: this.formId,
         allField: JSON.stringify(this.$refs.TableConfig.$refs.TableTree.treeData),
         defaultField: JSON.stringify(this.default.defaultField),
@@ -390,7 +366,7 @@ export default {
         this.btnLoading = false
       })
     },
-    confirm() {
+    confirm () {
       this.btnLoading = true
       this.user.customConfig = this.$refs.TableConfig.tableSettingsForm
       this.$refs.TableConfig.$refs.TableTree._getCheckedNodes()
@@ -407,31 +383,31 @@ export default {
       this.saveField()
       // this.dialogVisible = false
     },
-    resetField() {
+    resetField () {
       this.$refs.TableConfig.$refs.TableTree._resetField()
     },
-    resetSort() {
+    resetSort () {
       this.$refs.TableConfig.$refs.TableTree._resetSort()
     },
-    dialogBeforeClose() {
+    dialogBeforeClose () {
     },
-    OPEN_DIALOG() {
+    OPEN_DIALOG () {
       this.dialogVisible = true
     },
-    CLOSE_DIALOG() {
+    CLOSE_DIALOG () {
       this.dialogVisible = false
     },
-    SET_DIALOG_TITLE(content) {
+    SET_DIALOG_TITLE (content) {
       this.elTitle = content
     },
-    SET_SLOT_NAME(setSlotName) {
+    SET_SLOT_NAME (setSlotName) {
       this.slotName = setSlotName
     }
   }
 }
 </script>
 <style lang="scss">
-$primary: #4089FF;
+$primary: #4089ff;
 .dynamic-table {
   .tree_content {
     .el-input {
@@ -440,8 +416,8 @@ $primary: #4089FF;
   }
 
   .el-tree--highlight-current
-  .el-tree-node.is-current
-  > .el-tree-node__content {
+    .el-tree-node.is-current
+    > .el-tree-node__content {
     background-color: $primary;
     color: #fff;
     border-radius: 4px;
@@ -511,9 +487,9 @@ $primary: #4089FF;
 .el-button--new {
   color: #fff;
   background: linear-gradient(
-          90deg,
-          rgba($primary, 1) 0%,
-          rgba($primary, 1) 100%
+    90deg,
+    rgba($primary, 1) 0%,
+    rgba($primary, 1) 100%
   );
   box-shadow: 0px 5px 10px 0px rgba($primary, 0.3);
   border-radius: 2px;
@@ -523,9 +499,9 @@ $primary: #4089FF;
 .el-button--new:hover,
 .el-button--new:focus {
   background: linear-gradient(
-          90deg,
-          rgba($primary, 0.8) 0%,
-          rgba($primary, 0.8) 100%
+    90deg,
+    rgba($primary, 0.8) 0%,
+    rgba($primary, 0.8) 100%
   );
   color: #ffffff;
 }
@@ -536,11 +512,7 @@ $primary: #4089FF;
   border-radius: 4px;
   padding: 10px;
   display: flex;
-<<<<<<< HEAD
   flex: none !important;
-=======
-  flex: none!important;
->>>>>>> da03d8c26ec539ac3085b366480a622586eb9182
   flex-direction: column;
 }
 </style>
