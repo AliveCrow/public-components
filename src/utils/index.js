@@ -2,13 +2,13 @@
  * @Description: 输入文件描述信息
  * @Author: liu-wb
  * @Date: 2022-03-01 13:49:14
- * @LastEditTime: 2022-03-01 14:38:41
+ * @LastEditTime: 2022-03-04 10:14:47
  */
 import dayjs from 'dayjs'
 var quarterOfYear = require('dayjs/plugin/quarterOfYear')
 dayjs.extend(quarterOfYear)
 
-export function getTime() {
+export function getTime () {
 
   //   第一季度：1月－3月
   // 第二季度：4月－6月
@@ -36,7 +36,7 @@ export function getTime() {
   const list = [
     {
       text: '今年',
-      onClick(picker) {
+      onClick (picker) {
         const end = dayjs().endOf('year')
         const start = dayjs().startOf('year')
         // start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
@@ -48,7 +48,7 @@ export function getTime() {
 
   console.log({
     text: '本季度',
-    onClick(picker) {
+    onClick (picker) {
       const end = new Date();
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
@@ -56,4 +56,13 @@ export function getTime() {
     }
   });
 
+}
+export function cleanObj (obj) {
+  const newObj = Object.assign({}, obj)
+  for (const newObjKey in newObj) {
+    if (newObj[newObjKey] === '') {
+      delete newObj[newObjKey]
+    }
+  }
+  return newObj
 }

@@ -2,18 +2,18 @@
  * @Description: 输入文件描述信息
  * @Author: liu-wb
  * @Date: 2022-03-02 11:29:09
- * @LastEditTime: 2022-03-02 11:31:30
+ * @LastEditTime: 2022-03-04 09:54:55
  */
 import MyFormItem from './index.vue';
 
 export default {
-  title: '表单项',
+  title: 'components/表单项',
   component: MyFormItem,
-
 }
 
 
 const Template = (args, { argTypes }) => ({
+  id: '999',
   props: Object.keys(argTypes),
   components: { MyFormItem },
   data () {

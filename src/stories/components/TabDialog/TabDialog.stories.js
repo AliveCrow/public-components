@@ -2,13 +2,13 @@
  * @Description: 输入文件描述信息
  * @Author: liu-wb
  * @Date: 2022-03-01 13:15:08
- * @LastEditTime: 2022-03-01 13:19:35
+ * @LastEditTime: 2022-03-04 10:12:40
  */
 import { action } from '@storybook/addon-actions'
-import TabDialog from "../../components/TabDialog";
+import TabDialog from "../../../components/TabDialog";
 
 export default {
-    title: 'Tab弹出框',
+    title: 'components/Tab弹出框',
     component: TabDialog,
 
 }
@@ -17,7 +17,7 @@ export default {
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     components: { TabDialog },
-    data() {
+    data () {
         return {
             activeTab: '基本信息',
             visible: false,

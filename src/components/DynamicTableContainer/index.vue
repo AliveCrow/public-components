@@ -2,49 +2,37 @@
  * @Description: 输入文件描述信息
  * @Author: liu-wb
  * @Date: 2021-10-29 11:00:42
- * @LastEditTime: 2022-03-01 13:40:32
+ * @LastEditTime: 2022-02-18 17:22:00
 -->
 <template>
   <el-container ref="dynamic-table" class="dynamic-table">
     <TableHeader v-if="hasHeader" @openSettings="openSettings">
-      <TableFooter v-if="pagination" />
+      <TableFooter v-if="pagination && paginationPosition === 'top'"/>
       <template #btn>
         <!-- @slot Use this slot 操作按钮组 -->
-        <slot name="btn" />
+        <slot name="btn"/>
       </template>
     </TableHeader>
-    <!-- <TableFooter v-if="pagination" /> -->
-    <TableBody
-      ref="TableBody"
-      v-loading="TABLE_LOADING"
-      :table-data="tableData"
-    >
+    <TableBody ref="TableBody" v-loading="TABLE_LOADING" :table-data="tableData">
       <template #contextList="scope">
         <!-- @slot Use this slot 右键内容 -->
-        <slot name="contextList" :scope="scope.scope" />
+        <slot name="contextList" :scope="scope.scope"/>
       </template>
       <template #operate="scope">
         <!-- @slot Use this slot 操作列 -->
-        <slot name="operate" :scope="scope.scope" />
+        <slot name="operate" :scope="scope.scope"/>
       </template>
     </TableBody>
-    <el-dialog
-      v-dialogDrag
-      :title="elTitle"
-      :visible.sync="dialogVisible"
-      :width="dWidth"
-      append-to-body
-    >
-      <!-- @slot Use this slot dialog的插槽 -->
-      <slot :name="slotName" />
+    <TableFooter v-if="pagination && paginationPosition === 'bottom'"/>
+    <el-dialog v-dialogDrag :title="elTitle" :visible.sync="dialogVisible" :width="dWidth" append-to-body>
+      <!-- @slot dialog的插槽 -->
+      <slot :name="slotName"/>
       <template v-if="slotName === 'settings'">
-        <TableConfig ref="TableConfig" />
+        <TableConfig ref="TableConfig"/>
         <div slot="footer" style="text-align: center">
           <el-button type="primary" @click="resetField">恢复默认字段</el-button>
           <el-button type="primary" @click="resetSort">恢复默认排序</el-button>
-          <el-button :loading="btnLoading" type="primary" @click="confirm"
-            >确 定</el-button
-          >
+          <el-button :loading="btnLoading" type="primary" @click="confirm">确 定</el-button>
           <el-button @click="dialogVisible = false">取 消</el-button>
         </div>
       </template>
@@ -56,7 +44,6 @@ import TableHeader from './TableHeader'
 import TableBody from './TableBody'
 import TableFooter from './TableFooter'
 import TableConfig from './TableConfig'
-// import { getAllField, getListFieldConfig, saveListFieldConfig } from '@/controllers/Others/sys/dynamic-list'
 
 import store from 'store'
 
@@ -81,73 +68,73 @@ export default {
       default: 'defaultTitle'
     },
     /**
- * 动态表的Id
- */
+     * 动态表的Id
+     */
     formId: {
       type: String,
       default: '',
       required: true
     },
     /**
- * 是否有操作列
- */
+     * 是否有操作列
+     */
     hasOperate: {
       type: Boolean,
       default: true
     },
     /**
-* 表格数据
-*/
+     * 表格数据
+     */
     tableData: {
       type: Array,
       default: () => [],
       required: true
     },
     /**
-* dialog的宽度
-*/
+     * dialog的宽度
+     */
     dialogWidth: {
       type: String,
       default: '600px'
     },
     /**
-* 总页数
-*/
+     * 总页数
+     */
     total: {
       type: Number,
       default: 0
     },
     /**
-* 表格加载状态
-*/
+     * 表格加载状态
+     */
     tableLoading: {
       type: Boolean,
       default: false
     },
     /**
-* 表格高度(没有用)
-*/
+     * 表格高度
+     */
     tableHeight: {
       type: Number,
-      default: window.innerHeight - 310
+      default: 0
     },
     /**
-* 是否有序号列
-*/
+     * 是否有序号列
+     */
     hasIndex: {
       type: Boolean,
       default: false
     },
     /**
-* 是否显示表格title和按钮操作
-*/
+     * 是否显示表格title和按钮操作
+     */
     hasHeader: {
       type: Boolean,
       default: true
     },
     /**
-* 操作列的宽度
-*/
+     * 操作列的宽度
+     */
     operateWidth: {
       type: String,
       default: '100px'
@@ -162,6 +149,17 @@ export default {
     rowContext: {
       type: Boolean,
       default: false
+    },
+    /**
+     * 分页器位置
+     */
+    paginationPosition: {
+      type: String,
+      default: 'top',
+      validator: function (value) {
+        // 这个值必须匹配下列字符串中的一个
+        return ['top', 'bottom'].indexOf(value) !== -1
+      }
     }
   },
   data() {
@@ -184,45 +182,43 @@ export default {
       },
       slotName: 'settings',
       dWidth: '',
-      tableDynamicHeight: window.innerHeight - 310
+      clientHeight: '',
+      defaultSort: {
+        prop: 'facCode',
+        order: 'ascending'
+      }
     }
   },
   computed: {
     TABLE_LOADING() {
       return this.tableLoading
     }
-    // setDwidth() {
-    //   return () => {
-    //     this.dWidth = this.dialogWidth
-    //     return this.dWidth
-    //   }
-    // },
   },
-  // 202140
   provide() {
     return {
       title: this.title,
       formId: this.formId,
       hasOperate: this.hasOperate,
-      tableHeight: () => this.tableDynamicHeight,
+      tableHeight: () => this.tableHeight,
       hasIndex: this.hasIndex,
       operateWidth: this.operateWidth,
       selection: this.selection,
       rowContext: this.rowContext,
+      defaultSort: () => this.defaultSort,
       clickRow: (val) => {
         /**
-* 点击表格行
-*
-* @event rowClick
-*/
+         * 点击表格行
+         *
+         * @event rowClick
+         */
         this.$emit('rowClick', val)
       },
       dblclick: (val) => {
         /**
-* 双击表格行
-*
-* @event rowDblclick
-*/
+         * 双击表格行
+         *
+         * @event rowDblclick
+         */
         this.$emit('rowDblclick', val)
       },
       setElTitle: (val) => {
@@ -276,28 +272,20 @@ export default {
     },
     current(n) {
       /**
-* 当前页改变
-*
-* @event currentChange
-*/
+       * 当前页改变
+       *
+       * @event currentChange
+       */
       this.$emit('currentChange', n)
     }
   },
   created() {
     this.slotName = this.tableSlotName
     this.dWidth = this.dialogWidth
-    window.addEventListener('resize', this.updateTableHeight)
-    this.tableDynamicHeight = this.tableHeight
     this.getAllField()
     this.getListFieldConfig()
   },
-  destroyed() {
-    window.removeEventListener('resize', this.updateTableHeight)
-  },
   methods: {
-    updateTableHeight() {
-      this.tableDynamicHeight = window.innerHeight - 310
-    },
     setCurrentRow(index) {
       this.$refs.TableBody.setCurrentRow(index)
     },
@@ -306,30 +294,13 @@ export default {
       this.$emit('update:dialogWidth', '600px')
     },
     async getAllField() {
-      // const res = await getAllField({ formId: this.formId })
-      const res = {
-        'formId': null,
-        'pvgId': 1,
-        'formConfig': '{"lineHeight":44,"pageSize":2,"pagination":1,"fontSize":14}',
-        'formName': '收款单',
-        'allField': '[{"dict":false,"prop":"facCode","label":"工厂云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"date","label":"单据日期","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"billno","label":"收款单单据号","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeName","label":"合同名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"projFullname","label":"项目名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerName","label":"客户名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeCcode","label":"合同云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerNccode","label":"客户nc编码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"mny","label":"收款金额","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":true,"prop":"settletype","label":"结算类型","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"creator","label":"操作人","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"crtTime","label":"操作时间","width":"150","fommter":false,"orderby":"","sortable":false}]',
-        'defaultField': '[{"dict":false,"prop":"facCode","label":"工厂云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"date","label":"单据日期","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"billno","label":"收款单单据号","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeName","label":"合同名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"projFullname","label":"项目名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerName","label":"客户名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeCcode","label":"合同云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerNccode","label":"客户nc编码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"mny","label":"收款金额","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":true,"prop":"settletype","label":"结算类型","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"creator","label":"操作人","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"crtTime","label":"操作时间","width":"150","fommter":false,"orderby":"","sortable":false}]',
-        'customConfig': '{"lineHeight":44,"pageSize":2,"pagination":1,"fontSize":14}'
-      }
+      const res = await this.$api.erp.getAllField({ formId: this.formId })
       this.default.allField = JSON.parse(res.allField)
       this.default.defaultField = JSON.parse(res.defaultField)
       this.default.formConfig = JSON.parse(res.formConfig)
     },
     async getListFieldConfig() {
-      // const res = await getListFieldConfig({ formId: this.formId })
-      const res = {
-        'id': null,
-        'userEid': 398,
-        'customConfig': '{"lineHeight":44,"pageSize":2,"pagination":1,"fontSize":14}',
-        'formId': 202148,
-        'dispField': '[{"dict":false,"prop":"facCode","label":"工厂云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"date","label":"单据日期","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"billno","label":"收款单单据号","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeName","label":"合同名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"projFullname","label":"项目名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerName","label":"客户名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeCcode","label":"合同云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerNccode","label":"客户nc编码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"mny","label":"收款金额","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":true,"prop":"settletype","label":"结算类型","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"creator","label":"操作人","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"crtTime","label":"操作时间","width":"150","fommter":false,"orderby":"","sortable":false}]',
-        'allField': null
-      }
+      const res = await this.$api.erp.getListFieldConfig({ formId: this.formId })
       this.user.customConfig = JSON.parse(res.customConfig)
       if (!res.dispField) {
         this.user.dispField = JSON.parse(res.allField)
@@ -339,21 +310,31 @@ export default {
       this.size = this.user.customConfig.pageSize
       this.pagination = !!this.user.customConfig.pagination
       this.$refs.TableBody.setRowStyle()
+      // const { prop, orderby: order } = this.user.dispField.find(r => r.sortable)
       if (!this.user.customConfig.pagination) {
         store.set(this.formId, -1)
       } else {
         store.set(this.formId, this.user.customConfig.pageSize)
       }
+      // const res = {
+      //   'id': null,
+      //   'userEid': 398,
+      //   'customConfig': '{"lineHeight":44,"pageSize":2,"pagination":1,"fontSize":14}',
+      //   'formId': 202148,
+      //   'dispField': '[{"dict":false,"prop":"facCode","label":"工厂云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"date","label":"单据日期","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"billno","label":"收款单单据号","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeName","label":"合同名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"projFullname","label":"项目名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerName","label":"客户名称","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"agreeCcode","label":"合同云码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"customerNccode","label":"客户nc编码","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"mny","label":"收款金额","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":true,"prop":"settletype","label":"结算类型","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"creator","label":"操作人","width":"150","fommter":false,"orderby":"","sortable":false},{"dict":false,"prop":"crtTime","label":"操作时间","width":"150","fommter":false,"orderby":"","sortable":false}]',
+      //   'allField': null
+      // }
+
       // this.pagination = !this.user.customConfig.pagination
       /**
-* 点击dialog的确认按钮触发
-*
-* @event confirm
-*/
-      this.$emit('confirm')
+       * 点击dialog的确认按钮触发
+       *
+       * @event confirm
+       */
+      this.$emit('table-ready')
     },
     async saveField() {
-      const res = await saveListFieldConfig({
+      const res = await this.$api.erp.saveListFieldConfig({
         formId: this.formId,
         allField: JSON.stringify(this.$refs.TableConfig.$refs.TableTree.treeData),
         defaultField: JSON.stringify(this.default.defaultField),
@@ -374,13 +355,14 @@ export default {
         this.$refs.TableBody.setRowStyle()
         this.getAllField()
         this.getListFieldConfig()
-        this.$emit('confirm')
+        this.$emit('table-ready')
+      }).catch(() => {
+        this.btnLoading = false
       })
     },
     confirm() {
       this.btnLoading = true
-      const tableConfirm = this.$refs.TableConfig.tableSettingsForm
-      this.user.customConfig = tableConfirm
+      this.user.customConfig = this.$refs.TableConfig.tableSettingsForm
       this.$refs.TableConfig.$refs.TableTree._getCheckedNodes()
       // this.$refs.TableConfig.$refs.TableTree.checkedNodes
       const user_field = this.$refs.TableConfig.$refs.TableTree.checkedNodes
@@ -419,7 +401,7 @@ export default {
 }
 </script>
 <style lang="scss">
-$primary: #4089ff;
+$primary: #4089FF;
 .dynamic-table {
   .tree_content {
     .el-input {
@@ -428,8 +410,8 @@ $primary: #4089ff;
   }
 
   .el-tree--highlight-current
-    .el-tree-node.is-current
-    > .el-tree-node__content {
+  .el-tree-node.is-current
+  > .el-tree-node__content {
     background-color: $primary;
     color: #fff;
     border-radius: 4px;
@@ -499,21 +481,21 @@ $primary: #4089ff;
 .el-button--new {
   color: #fff;
   background: linear-gradient(
-    90deg,
-    rgba($primary, 1) 0%,
-    rgba($primary, 1) 100%
+          90deg,
+          rgba($primary, 1) 0%,
+          rgba($primary, 1) 100%
   );
   box-shadow: 0px 5px 10px 0px rgba($primary, 0.3);
-  border-radius: 4px;
+  border-radius: 2px;
   border: none;
 }
 
 .el-button--new:hover,
 .el-button--new:focus {
   background: linear-gradient(
-    90deg,
-    rgba($primary, 0.8) 0%,
-    rgba($primary, 0.8) 100%
+          90deg,
+          rgba($primary, 0.8) 0%,
+          rgba($primary, 0.8) 100%
   );
   color: #ffffff;
 }
@@ -523,6 +505,8 @@ $primary: #4089ff;
   background-color: #fff;
   border-radius: 4px;
   padding: 10px;
-  display: block;
+  display: flex;
+  flex: none !important;
+  flex-direction: column;
 }
 </style>

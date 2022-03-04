@@ -2,17 +2,17 @@
  * @Description: 输入文件描述信息
  * @Author: liu-wb
  * @Date: 2022-02-18 15:26:15
- * @LastEditTime: 2022-03-01 13:19:25
+ * @LastEditTime: 2022-03-04 10:11:59
  */
 import Vue from 'vue';
 import Element from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(Element, { size: 'small', zIndex: 3000 });
 
-import DynamicTableContainer from '../../components/DynamicTableContainer/index.vue'
+import DynamicTableContainer from '../../../components/DynamicTableContainer/index.vue'
 
 export default {
-  title: '动态表格',
+  title: 'components/动态表格',
   component: DynamicTableContainer,
 }
 

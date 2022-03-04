@@ -9,8 +9,8 @@
     <el-table
         ref="table"
         class="table"
-        :max-height="tableHeight()"
         :row-style="rowStyle"
+        :max-height="tableHeight()"
         highlight-current-row
         :data="tableData"
         border
@@ -22,6 +22,7 @@
     >
       <el-table-column
           v-if="selection"
+          fixed="left"
           type="selection"
           width="55"/>
       <el-table-column
@@ -36,9 +37,9 @@
           :key="index"
           align="center"
           v-bind="{
-          ...el,
-          width: 0,
-        }"
+                ...el,
+                width: 0,
+              }"
           :min-width="el.width"
           show-overflow-tooltip
       >
@@ -50,7 +51,7 @@
         </template>
       </el-table-column>
       <el-table-column
-          v-if="hasOperate"
+          v-if="hasOperate && USER_FIELD().dispField.length>0"
           fixed="right"
           label="操作"
           :width="operateWidth"
@@ -87,7 +88,8 @@ export default {
     'hasIndex',
     'operateWidth',
     'selection',
-    'rowContext'
+    'rowContext',
+    'defaultSort'
   ],
   props: {
     tableData: {
@@ -114,18 +116,9 @@ export default {
   mounted() {
     document.documentElement.addEventListener('mousedown', this.showContext, true)
   },
-  // watch: {
-  //   tableData: {
-  //     immediate: true,
-  //     deep: true,
-  //     handler: function(n, o) {
-  //       if (n.length >= 0) {
-  //         this.tableLoading = false
-  //       }
-  //     }
-  //   }
-  //
-  // },
+  destroyed() {
+    document.documentElement.removeEventListener('mousedown', this.showContext)
+  },
   methods: {
     showContext() {
       this.contextVisible = false
@@ -175,7 +168,6 @@ export default {
       this.rowContextActive(row, column, event)
     },
     rowContextActive(row, column, event) {
-      console.log(this.rowContext)
       if (!this.rowContext) return
       event.preventDefault()
       const menuMinWidth = 105
@@ -213,6 +205,10 @@ export default {
 }
 
 .dynamic-table-body {
+  .table {
+    max-height: 100%;
+  }
+
   .contextmenu {
     margin: 0;
     background: #fff;
@@ -224,6 +220,22 @@ export default {
     color: #333;
     box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
 
+    ul {
+      margin: 0;
+      padding: 0;
+
+      li {
+        margin: 0;
+        padding: 7px 16px;
+        cursor: pointer;
+        list-style: none;
+
+        &:hover {
+          background: #4089ff;
+          color: #fff;
+        }
+      }
+    }
   }
 }
 </style>

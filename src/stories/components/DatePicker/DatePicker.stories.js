@@ -2,21 +2,21 @@
  * @Description: 输入文件描述信息
  * @Author: liu-wb
  * @Date: 2022-03-01 15:03:49
- * @LastEditTime: 2022-03-01 15:06:16
+ * @LastEditTime: 2022-03-04 09:56:07
  */
 import DatePicker from './DatePicker.vue'
 import dayjs from 'dayjs'
 
 
 export default {
-  title: '日期控件',
+  title: 'components/日期控件',
   component: DatePicker,
 }
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { DatePicker },
-  data() {
-    function getQuarter() {
+  data () {
+    function getQuarter () {
       var quarterOfYear = require('dayjs/plugin/quarterOfYear')
       dayjs.extend(quarterOfYear)
       const quarter = dayjs().quarter() - 1
@@ -33,7 +33,7 @@ const Template = (args, { argTypes }) => ({
         shortcuts: [
           {
             text: '今天',
-            onClick(picker) {
+            onClick (picker) {
               const end = new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 3600 * 1000 - 1);
               const start = new Date(new Date(new Date().toLocaleDateString()).getTime());
               picker.$emit('pick', [start, end]);
@@ -41,7 +41,7 @@ const Template = (args, { argTypes }) => ({
           },
           {
             text: '昨天',
-            onClick(picker) {
+            onClick (picker) {
               const end = new Date(new Date(new Date().toLocaleDateString()).getTime() - 1)
               const start = new Date(new Date(new Date().toLocaleDateString()).getTime() - 24 * 3600 * 1000);
               picker.$emit('pick', [start, end]);
@@ -49,7 +49,7 @@ const Template = (args, { argTypes }) => ({
           },
           {
             text: '本周',
-            onClick(picker) {
+            onClick (picker) {
               const end = new Date();
               const start = new Date();
               end.setTime(start.getTime() + 3600 * 1000 * 24 * 7);
@@ -58,7 +58,7 @@ const Template = (args, { argTypes }) => ({
           },
           {
             text: '上周',
-            onClick(picker) {
+            onClick (picker) {
               const end = new Date();
               const start = new Date();
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
@@ -67,7 +67,7 @@ const Template = (args, { argTypes }) => ({
           },
           {
             text: '本月',
-            onClick(picker) {
+            onClick (picker) {
               const end = new Date();
               const start = new Date();
               end.setTime(start.getTime() + 3600 * 1000 * 24 * 28);
@@ -76,7 +76,7 @@ const Template = (args, { argTypes }) => ({
           },
           {
             text: '上月',
-            onClick(picker) {
+            onClick (picker) {
               const end = new Date();
               const start = new Date();
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 28);
@@ -85,7 +85,7 @@ const Template = (args, { argTypes }) => ({
           },
           {
             text: '今年',
-            onClick(picker) {
+            onClick (picker) {
               const end = dayjs().endOf('year')
               const start = dayjs().startOf('year')
               // start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
@@ -94,7 +94,7 @@ const Template = (args, { argTypes }) => ({
           },
           {
             text: '去年',
-            onClick(picker) {
+            onClick (picker) {
               const end = dayjs().year(dayjs().year() - 1).endOf('year')
               const start = dayjs().year(dayjs().year() - 1).startOf('year')
               // start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
@@ -103,7 +103,7 @@ const Template = (args, { argTypes }) => ({
           },
           {
             text: '上半年',
-            onClick(picker) {
+            onClick (picker) {
               const end = dayjs(`${dayjs().format('YYYY')}-06-30`)
               const start = dayjs().startOf('year')
               // start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
@@ -112,7 +112,7 @@ const Template = (args, { argTypes }) => ({
           },
           {
             text: '上半年',
-            onClick(picker) {
+            onClick (picker) {
               const end = dayjs().endOf('year')
               const start = dayjs(`${dayjs().format('YYYY')}-07-01`)
               // start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
@@ -121,7 +121,7 @@ const Template = (args, { argTypes }) => ({
           },
           {
             text: '本季度',
-            onClick(picker) {
+            onClick (picker) {
               const end = dayjs().endOf('quarter')
               const start = dayjs().startOf('quarter')
               // start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
@@ -130,7 +130,7 @@ const Template = (args, { argTypes }) => ({
           },
           {
             text: '上季度',
-            onClick(picker) {
+            onClick (picker) {
               picker.$emit('pick', (function () {
                 var quarterOfYear = require('dayjs/plugin/quarterOfYear')
                 dayjs.extend(quarterOfYear)

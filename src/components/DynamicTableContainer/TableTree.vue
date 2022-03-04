@@ -5,8 +5,8 @@
  * @LastEditTime: 2022-02-18 15:57:16
 -->
 <template>
-    <el-scrollbar style="height: 400px; width: 100%;padding-bottom:20px" class="table-tree">
-      <el-tree
+  <el-scrollbar style="height: 400px; width: 100%;padding-bottom:20px" class="table-tree">
+    <el-tree
         ref="tree"
         class="tree"
         draggable
@@ -19,8 +19,8 @@
         :render-content="_renderContent"
         @node-drag-start="_nodeDragStart"
         @node-drop="_nodeDrop"
-      />
-    </el-scrollbar>
+    />
+  </el-scrollbar>
 </template>
 <script lang='js'>
 function deepClone(source) {
@@ -37,12 +37,22 @@ function deepClone(source) {
   })
   return targetObj
 }
+
 export default {
   inject: ['DEFAULT_FIELD', 'USER_FIELD'],
   data() {
     return {
       treeData: [],
       checkedNodes: []
+    }
+  },
+  watch: {
+    treeData: {
+      deep: true,
+      handler(n, o) {
+        // eslint-disable-next-line no-return-assign
+        console.log(n)
+      }
     }
   },
   mounted() {
@@ -88,19 +98,22 @@ export default {
     },
     _renderContent(h, { node, data, store }) {
       return (
-        <el-row >
+        <el-row>
           <el-col span={12}>
             {node.label}
           </el-col>
           <el-col span={12} class='tree_content'>
             <div class='move'>
               <i class='el-icon-rank' title='拖动排序'></i></div>
-            <el-input class='left_margin_10' size='small' type='number' v-model={data.width} maxlength='3' />
+            <el-input class='left_margin_10' size='small' type='number' v-model={data.width} maxlength='3'/>
             <el-select
               size='small'
               v-model={data.orderby}
               class='left_margin_10'
               clearable
+              onBlur={() => this.treeData.some(r => r.orderby !== '') ? this.treeData.forEach(r => {
+                r.orderby = ''
+              }) : null}
               placeholder='请选择'
             >
               <el-option label='升序' value='ascending'>升序</el-option>
@@ -115,26 +128,32 @@ export default {
   // <el-option label='降序' value='descending'>降序</el-option>
 }
 </script>
-<style  lang='scss' >
+<style lang='scss'>
 .table-tree {
   max-height: 350px;
   overflow-x: hidden;
+
   .tree_content {
     display: flex;
     align-items: center;
+
     .el-input__inner {
       width: 100px;
     }
   }
+
   .el-scrollbar__wrap {
     overflow-x: hidden;
   }
+
   .el-tree-node {
     height: 40px;
   }
+
   .el-scrollbar__view {
     padding-top: 10px;
   }
+
   .el-row {
     display: flex;
     align-items: center;

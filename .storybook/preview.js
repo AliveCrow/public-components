@@ -2,7 +2,7 @@
  * @Description: 输入文件描述信息
  * @Author: liu-wb
  * @Date: 2022-02-18 13:27:01
- * @LastEditTime: 2022-02-18 16:45:02
+ * @LastEditTime: 2022-03-04 09:53:54
  */
 import '../src/styles/index.scss'
 export const parameters = {
@@ -13,4 +13,10 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  options: {
+    storySort: (a, b) => {
+
+    }
+  },
+
 }
